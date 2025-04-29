@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <title>Calculadora Urbana</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body class="bg-light">
+<div class="container mt-5">
+    <h2 class="mb-4">Formulário de Planejamento Urbano</h2>
+    <form method="post">
+        {% csrf_token %}
+    
+        <div class="row mb-3">
+            <div class="col-md-6">
+                <label for="estado" class="form-label">Estado</label>
+                <select id="estado" name="estado" class="form-select" required>
+                    <option value="">Selecione o estado</option>
+                </select>
+            </div>
+            <div class="col-md-6">
+                <label for="cidade" class="form-label">Cidade</label>
+                <select id="cidade" name="cidade" class="form-select" required>
+                    <option value="">Selecione a cidade</option>
+                </select>
+            </div>
+        </div>
+
+        <div class="mb-3">
+            <label for="link" class="form-label">Link do Plano Diretor</label>
+            <input type="url" class="form-control" id="link" name="link" placeholder="https://exemplo.com/planodiretor">
+        </div>
+
+        <div class="mb-3">
+            <label for="zona" class="form-label">Zona urbana</label>
+            <input type="text" class="form-control" id="zona" name="zona" placeholder="Ex: ZR2, MUQ5">
+        </div>
+
+        <div class="row mb-3">
+            <div class="col-md-4">
+                <label class="form-label">Frente do terreno (m)</label>
+                <input type="number" step="any" class="form-control" name="frente" placeholder="Ex: 15">
+            </div>
+            <div class="col-md-4">
+                <label class="form-label">Profundidade do terreno (m)</label>
+                <input type="number" step="any" class="form-control" name="profundidade" placeholder="Ex: 25">
+            </div>
+            <div class="col-md-4">
+                <label class="form-label">Área do terreno (m²)</label>
+                <input type="number" step="any" class="form-control" name="area" placeholder="Ex: 375">
+            </div>
+        </div>
+
+        <div class="row mb-3">
+            <div class="col-md-6">
+                <label class="form-label">Coef. de Aproveitamento (CA)</label>
+                <input type="number" step="any" class="form-control" name="ca_basico" placeholder="Ex: 2.0">
+            </div>
+            <div class="col-md-6">
+                <label class="form-label">CA máximo com outorga onerosa</label>
+                <input type="number" step="any" class="form-control" name="ca_maximo" placeholder="Ex: 3.0">
+            </div>
+        </div>
+
+        <div class="mb-3">
+            <label class="form-label">Taxa de ocupação permitida (%)</label>
+            <input type="number" step="any" class="form-control" name="taxa_ocupacao" placeholder="Ex: 100">
+        </div>
+
+        <div class="row mb-3">
+            <div class="col-md-4">
+                <label class="form-label">Recuo Frontal (m)</label>
+                <input type="number" step="any" class="form-control" name="recuo_frontal" placeholder="Ex: 5">
+            </div>
+            <div class="col-md-4">
+                <label class="form-label">Recuo Lateral (m)</label>
+                <input type="number" step="any" class="form-control" name="recuo_lateral" placeholder="Ex: 1.5">
+            </div>
+            <div class="col-md-4">
+                <label class="form-label">Recuo de Fundos (m)</label>
+                <input type="number" step="any" class="form-control" name="recuo_fundos" placeholder="Ex: 2.0">
+            </div>
+        </div>
+
+        <div class="mb-3">
+            <label class="form-label">Altura máxima permitida (m)</label>
+            <input type="number" step="any" class="form-control" name="altura_maxima" placeholder="Ex: 28">
+        </div>
+        <hr class="my-4">
+
+        <h5 class="mb-3">🏠 Tipos de unidades residenciais e áreas médias (m²)</h5>
+        <div class="row mb-3">
+            <div class="col-md-4">
+                <label class="form-label">Studio</label>
+                <input type="number" step="any" class="form-control" name="studio_m2" placeholder="Ex: 35">
+            </div>
+            <div class="col-md-4">
+                <label class="form-label">2 dormitórios</label>
+                <input type="number" step="any" class="form-control" name="dois_dorm_m2" placeholder="Ex: 60">
+            </div>
+            <div class="col-md-4">
+                <label class="form-label">3 dormitórios</label>
+                <input type="number" step="any" class="form-control" name="tres_dorm_m2" placeholder="Ex: 80">
+            </div>
+        </div>
+
+        <div class="mb-3">
+            <label class="form-label">📦 % de área comum a descontar</label>
+            <input type="number" step="any" class="form-control" name="percentual_area_comum" placeholder="Ex: 20">
+        </div>
+
+        <div class="mb-3">
+            <label class="form-label">🚗 Vagas mínimas por unidade</label>
+            <input type="number" class="form-control" name="vagas_minimas_unidade" placeholder="Ex: 1">
+        </div>
+
+        <div class="mb-3">
+            <label class="form-label">🏪 Comércio no térreo é obrigatório?</label>
+            <select class="form-select" name="comercio_obrigatorio">
+                <option value="">Selecione</option>
+                <option value="Sim">Sim</option>
+                <option value="Não">Não</option>
+            </select>
+        </div>
+
+        <div class="d-flex gap-2 mt-4">
+            <button type="submit" class="btn btn-primary">Enviar</button>
+            <button type="button" id="novaConsulta" class="btn btn-primary" disabled>Nova Consulta</button>
+        </div>
+    </form>
+
+    <div id="resposta" style="display: none; border: 1px solid #ccc; padding: 15px; margin-top: 20px; background: #f9f9f9;">
+        {% if resposta %}
+        <div id="resposta">
+            {{ resposta|safe }}
+        </div>
+    
+        <script>
+            document.addEventListener('DOMContentLoaded', function() {
+                const botaoNovaConsulta = document.getElementById('novaConsulta');
+                const respostaDiv = document.getElementById('resposta');
+                const formulario = document.querySelector('form');
+                if (respostaDiv) {
+                            respostaDiv.style.display = 'block';
+                            respostaDiv.scrollIntoView({ behavior: 'smooth' });
+                        }
+                
+    
+                if (botaoNovaConsulta) {
+                    botaoNovaConsulta.removeAttribute('disabled'); // Habilita o botão "Nova Consulta"
+    
+                    // Quando clicar no botão "Nova Consulta"
+                    botaoNovaConsulta.addEventListener('click', function(e) {
+                        e.preventDefault(); // Impede o comportamento padrão do botão
+                        
+                        // Limpar todos os campos do formulário
+                        if (formulario) {
+                            formulario.reset();
+                        }
+                        
+                        // Esconder a resposta
+                        if (respostaDiv) {
+                            respostaDiv.style.display = 'none';
+                        }
+
+                        window.scrollTo({ top: 0, behavior: 'smooth' });
+                        
+                        // Desabilitar o botão novamente
+                        botaoNovaConsulta.setAttribute('disabled', true);
+                    });
+                }
+            });
+            
+        </script>
+    {% endif %}
+    
+    </div>
+</div>
+
+
+
+<script>
+    const estadoSelect = document.getElementById("estado");
+    const cidadeSelect = document.getElementById("cidade");
+
+    // Carrega os estados via API do IBGE
+    fetch("https://servicodados.ibge.gov.br/api/v1/localidades/estados?orderBy=nome")
+        .then(res => res.json())
+        .then(estados => {
+            estados.forEach(estado => {
+                const option = document.createElement("option");
+                option.value = estado.sigla;
+                option.textContent = estado.nome;
+                estadoSelect.appendChild(option);
+            });
+        });
+
+    // Quando o estado muda, carrega as cidades
+    estadoSelect.addEventListener("change", () => {
+        const uf = estadoSelect.value;
+        cidadeSelect.innerHTML = '<option value="">Carregando...</option>';
+
+        fetch(`https://servicodados.ibge.gov.br/api/v1/localidades/estados/${uf}/municipios`)
+            .then(res => res.json())
+            .then(cidades => {
+                cidadeSelect.innerHTML = '<option value="">Selecione a cidade</option>';
+                cidades.forEach(cidade => {
+                    const option = document.createElement("option");
+                    option.value = cidade.nome;
+                    option.textContent = cidade.nome;
+                    cidadeSelect.appendChild(option);
+                });
+            });
+    });
+</script>
+
+</body>
+</html>
+

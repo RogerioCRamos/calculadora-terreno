@@ -1,0 +1,14 @@
+Estado: CE
+Cidade: Acaraú
+Link: http://www.mozão.com.br
+Zona Urbana: ZR2
+Frente: 1 m
+Profundidade: 2 m
+Área: 3 m²
+CA Básico: 4
+CA Máximo: 5
+Taxa de Ocupação: 100%
+Recuo Frontal: 6 m
+Recuo Lateral: 7 m
+Recuo Fundos: 8 m
+Altura Máxima: 9 m
