@@ -90,18 +90,27 @@
 
         <h5 class="mb-3">🏠 Tipos de unidades residenciais e áreas médias (m²)</h5>
         <div class="row mb-3">
+        <div class="col-md-4">
+            <label class="form-label">Studios na construção?</label>
+            <select class="form-select" id="studio_select">
+                <option value="nao">Não</option>
+                <option value="sim">Sim</option>
+            </select>
+        </div>
+        <div class="col-md-4" id="studio_field" style="display: none;">
+            <label class="form-label">Studio</label>
+            <input type="number" step="any" class="form-control" id="studio_m2" name="studio_m2" placeholder="Ex: 35">
+        </div>
+         
+
             <div class="col-md-4">
-                <label class="form-label">Studio</label>
-                <input type="number" step="any" class="form-control" name="studio_m2" placeholder="Ex: 35">
-            </div>
-            <div class="col-md-4">
-                <label class="form-label">2 dormitórios</label>
-                <input type="number" step="any" class="form-control" name="dois_dorm_m2" placeholder="Ex: 60">
-            </div>
-            <div class="col-md-4">
-                <label class="form-label">3 dormitórios</label>
-                <input type="number" step="any" class="form-control" name="tres_dorm_m2" placeholder="Ex: 80">
-            </div>
+            <label class="form-label">Número de dormitórios(máximo 4)</label>
+            <input type="number" min="1" max="4" id="max_dormitorios" name="max_dormitorios" class="form-control" placeholder="Ex: 3">
+        </div>
+
+        <div class="col-12 mt-3" id="campos_dinamicos">
+            <!-- Os campos serão inseridos dinamicamente aqui -->
+        </div>
         </div>
 
         <div class="mb-3">
@@ -117,7 +126,6 @@
         <div class="mb-3">
             <label class="form-label">🏪 Comércio no térreo é obrigatório?</label>
             <select class="form-select" name="comercio_obrigatorio">
-                <option value="">Selecione</option>
                 <option value="Sim">Sim</option>
                 <option value="Não">Não</option>
             </select>
@@ -213,6 +221,71 @@
             });
     });
 </script>
+
+
+
+<script>
+    const studioSelect = document.getElementById("studio_select");
+    const studioField = document.getElementById("studio_field");
+    const studioInput = document.getElementById("studio_m2");
+
+    studioSelect.addEventListener("change", () => {
+        if (studioSelect.value === "sim") {
+            studioField.style.display = "block";
+            studioInput.value = ""; // limpa o campo
+        } else {
+            studioField.style.display = "none";
+            studioInput.value = 0; // atribui 0 automaticamente
+        }
+    });
+</script>
+
+<script>
+    const maxDormInput = document.getElementById("max_dormitorios");
+    const camposContainer = document.getElementById("campos_dinamicos");
+
+    function gerarCampos(qtd) {
+      camposContainer.innerHTML = "";
+      for (let i = 1; i <= qtd; i++) {
+        const div = document.createElement("div");
+        div.className = "mb-3";
+
+        const label = document.createElement("label");
+        label.className = "form-label";
+        label.innerText = `${i} dormitório${i > 1 ? 's' : ''}`;
+
+        const input = document.createElement("input");
+        input.type = "number";
+        input.step = "any";
+        input.className = "form-control";
+        input.name = `dormitorio_${i}_m2`;
+        input.placeholder = `Área média do dormitório ${i} (m²)`;
+
+        div.appendChild(label);
+        div.appendChild(input);
+        camposContainer.appendChild(div);
+      }
+    }
+
+    maxDormInput.addEventListener("input", function () {
+      let valor = parseInt(this.value, 10);
+
+      if (isNaN(valor) || valor <= 0) {
+        camposContainer.innerHTML = "";
+        return;
+      }
+
+      if (valor > 4) {
+        valor = 4;
+        this.value = 4; // Corrige o valor no input
+      }
+
+      gerarCampos(valor); // Garante que sempre recria os campos com o valor corrigido
+    });
+  </script>
+
+
+
 
 </body>
 </html>

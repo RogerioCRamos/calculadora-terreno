@@ -18,11 +18,22 @@ def formulario_view(request):
         recuo_fundos = request.POST.get('recuo_fundos')
         altura_maxima = request.POST.get('altura_maxima')
         studio = request.POST.get('studio_m2')
-        dois_dorms = request.POST.get('dois_dorm_m2')
-        tres_dorms = request.POST.get('tres_dorm_m2')
+        max_dorms = int(request.POST.get('max_dormitorios', 0))
+        dormitorios = {}
+        for i in range(1, max_dorms + 1):
+            valor = request.POST.get(f'dormitorio_{i}_m2')
+            if valor:
+                dormitorios[i] = int(valor)
+
+
         percentual_area_comum = request.POST.get('percentual_area_comum')
         vagas_unidade = request.POST.get('vagas_minimas_unidade')
         comercio_terreo = request.POST.get('comercio_obrigatorio')
+
+        studio_text = f"- Studio: {studio}<br>" if studio and studio != "0" else ""
+        dorm_text = ""
+        for i, v in dormitorios.items():
+            dorm_text += f"- {i} dormitório{'s' if i > 1 else ''}: {v}<br>"
 
         responseText = f"""Você é um assistente especialista em planejamento urbano e viabilidade imobiliária.
 
@@ -55,9 +66,8 @@ Recuos obrigatórios (m):<br>
 Altura máxima permitida (m): {altura_maxima}  <br><br>
 
 🏠 *Tipos de unidades residenciais e áreas médias (m²):*  <br>
-- Studio: {studio}<br>
-- 2 dormitórios: {dois_dorms} <br>
-- 3 dormitórios: {tres_dorms}<br><br>
+{studio_text}
+{dorm_text}<br>
 
 📦 % de área comum a descontar: {percentual_area_comum}<br>
 🚗 Vagas mínimas por unidade: {vagas_unidade} <br>
